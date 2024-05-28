@@ -1,0 +1,389 @@
+---
+title: "Data Meet Art - A Waffle Visualization"
+output: html_document
+date: "2024-05-28"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# **This project show visualization of students adaptivity level\n in online education with focus on beautiful palettes from the MetBrewer R package**
+
+
+```{r}
+# Import the libraries
+library(tidyverse) # For data transformation and manipulation
+library(ggplot2) # For data visualisation
+library(tidyverse)
+library(showtext)
+library(ggtext)
+library(waffle) # For data visualisation
+library(MetBrewer)
+library(patchwork)
+
+```
+
+
+# **Loading data into R Environment
+
+```{r}
+# Load the data
+path = "C:/Users/Hp/Desktop/IBK - TEMP/Students Adaptivity Level in Online Education.csv"
+
+adapt <- read_csv(path) 
+#df <- file.choose()
+###### Exploratory Data Analysis
+
+# Check the first few rows of the data
+head(adapt)
+
+# Check the no. of rows and columns of the data
+dim(adapt)
+
+# Check information of the data
+glimpse(adapt)
+```
+
+# **Data Preparation**
+
+```{r}
+df1 <- adapt|> 
+  select(c(Network_Type,Financial_Condition))|> group_by(Network_Type,Financial_Condition)|>
+  count(Network_Type,Financial_Condition)
+
+
+df1
+```
+
+
+
+
+```{r}
+df2 <- adapt|> 
+  select(c(Device,Adaptivity_Level))|> group_by(Device,Adaptivity_Level)|>
+  count(Device,Adaptivity_Level)
+df2
+```
+
+```{r}
+
+df3 <- adapt|> 
+  select(c(Education_Level,Institution_Type))|> group_by(Education_Level,Institution_Type)|>
+  count(Education_Level,Institution_Type)
+df3
+```
+
+```{r}
+
+df4 <- adapt|> 
+  select(c(Gender,IT_Student))|> group_by(Gender,IT_Student)|>
+  count(Gender,IT_Student)
+df4
+```
+
+# **Text Preparation**
+
+```{r}
+
+font_add_google("Outfit", "title_font")
+font_add_google("Cabin", "body_font")
+showtext_auto()
+
+title_font <- "title_font"
+body_font <- "body_font"
+
+```
+
+
+# **Data Visualization**
+
+
+```{r}
+viz1 = ggplot(df1, aes(fill = Network_Type , values = n)) +
+   geom_waffle(color = "white", size = 0.25,n_rows = 10, flip = TRUE) +
+  facet_wrap(~Financial_Condition, nrow = 1, strip.position = "bottom") +
+  scale_x_discrete() + 
+  scale_y_continuous(labels = function(x) x * 10, # make this multiply the same as n_rows
+                     expand = c(0,0))+
+  scale_fill_met_d("VanGogh2", direction=1)+
+  labs(title = "VanGogh2", x = "Financial Condition",
+       
+       subtitle =  " ",
+       caption = "")+
+  theme_minimal()+
+  theme(
+        axis.text.x = element_text(family = body_font, size=12),
+    axis.text.y = element_text(family = body_font, size=12),
+  # Legend
+  legend.position = "right",
+  legend.title = element_text(" "),
+  legend.spacing = unit(0.5, 'cm'),
+  legend.key.height= unit(0.5, 'cm'),
+  legend.key.width= unit(0.7, 'cm'),
+  legend.text = element_text(family = body_font,
+                             size=13,
+                             face = 'plain',
+                             color = "grey10"),
+  
+  # TITLE
+  plot.title.position = "plot",
+  plot.title = element_textbox(margin = margin(20, 0, 10, 0),
+                               size = 15,
+                               family = title_font,
+                               face = "bold",
+                               width = unit(55, "lines")),
+  
+  # SUB-TITLE
+  plot.subtitle = element_text(margin = margin(10, 0, 20, 0),
+                            size = 16,
+                            family = body_font,
+                            color = "grey15"),
+  # Caption
+  plot.caption.position = "plot", 
+  plot.caption = element_text(family=body_font,
+                              face="bold",
+                              size=16, 
+                              color="grey40",
+                              hjust=.5, 
+                              margin=margin(20,0,0,0)),
+  
+  plot.background = element_rect(color="white", fill="white"),
+  plot.margin = margin(20, 40, 20, 40)
+)
+
+showtext_opts(dpi = 320)
+
+ggsave(
+  "C:/Users/Hp/Desktop/IBK - TEMP/viz1.png", 
+)
+showtext_auto(FALSE)
+ 
+viz1
+```
+
+
+
+
+```{r}
+viz2 <- ggplot(df2, aes(fill = Device, values = n)) +
+   geom_waffle(color = "white", size = 0.25, n_rows = 10, flip = TRUE) +
+  facet_wrap(~Adaptivity_Level, nrow = 1, strip.position = "bottom") +
+  scale_x_discrete() + 
+  scale_y_continuous(labels = function(x) x * 10, # make this multiply the same as n_rows
+                     expand = c(0,0))+
+  scale_fill_met_d("Homer1", direction=1)+
+  labs(title = "Homer1", x = "Adaptivity_Level",
+       
+       subtitle =  " ",
+       caption = " ")+
+  theme_minimal()+
+  theme(
+        axis.text.x = element_text(family = body_font, size=12),
+    axis.text.y = element_text(family = body_font, size=12),
+  # Legend
+  legend.position = "right",
+  legend.title = element_text(" "),
+  legend.spacing = unit(0.5, 'cm'),
+  legend.key.height= unit(0.5, 'cm'),
+  legend.key.width= unit(0.7, 'cm'),
+  legend.text = element_text(family = body_font,
+                             size=13,
+                             face = 'plain',
+                             color = "grey10"),
+  
+  # TITLE
+  plot.title.position = "plot",
+  plot.title = element_textbox(margin = margin(20, 0, 10, 0),
+                               size = 15,
+                               family = title_font,
+                               face = "bold",
+                               width = unit(55, "lines")),
+  
+  # SUB-TITLE
+  plot.subtitle = element_text(margin = margin(10, 0, 20, 0),
+                            size = 16,
+                            family = body_font,
+                            color = "grey15"),
+  # Caption
+  plot.caption.position = "plot", 
+  plot.caption = element_text(family=body_font,
+                              face="bold",
+                              size=16, 
+                              color="grey40",
+                              hjust=.5, 
+                              margin=margin(20,0,0,0)),
+  
+  plot.background = element_rect(color="white", fill="white"),
+  plot.margin = margin(20, 40, 20, 40)
+)
+
+showtext_opts(dpi = 320)
+
+ggsave(
+  "C:/Users/Hp/Desktop/IBK - TEMP/viz2.png", 
+  dpi=320, width = 12, height = 9
+)
+showtext_auto(FALSE)
+ 
+viz2
+```
+
+
+
+
+```{r}
+viz3 <- ggplot(df3, aes(fill = Institution_Type, values = n)) +
+   geom_waffle(color = "white", size = 0.25, n_rows = 10, flip = TRUE) +
+  facet_wrap(~Education_Level, nrow = 1, strip.position = "bottom") +
+  scale_x_discrete() + 
+  scale_y_continuous(labels = function(x) x * 10, # make this multiply the same as n_rows
+                     expand = c(0,0))+
+  scale_fill_met_d("Hiroshige", direction=1)+
+  labs(title = "Hiroshige", x = "Education Level",
+       
+       subtitle =  "",caption = "")+
+  theme_minimal()+
+  theme(
+        axis.text.x = element_text(family = body_font, size=12),
+    axis.text.y = element_text(family = body_font, size=12),
+  # Legend
+  legend.position = "right",
+  legend.title = element_text(" "),
+  legend.spacing = unit(0.5, 'cm'),
+  legend.key.height= unit(0.5, 'cm'),
+  legend.key.width= unit(0.7, 'cm'),
+  legend.text = element_text(family = body_font,
+                             size=13,
+                             face = 'plain',
+                             color = "grey10"),
+  
+  # TITLE
+  plot.title.position = "plot",
+  plot.title = element_textbox(margin = margin(20, 0, 10, 0),
+                               size = 15,
+                               family = title_font,
+                               face = "bold",
+                               width = unit(55, "lines")),
+  
+  # SUB-TITLE
+  plot.subtitle = element_text(margin = margin(10, 0, 20, 0),
+                            size = 16,
+                            family = body_font,
+                            color = "grey15"),
+  # Caption
+  plot.caption.position = "plot", 
+  plot.caption = element_text(family=body_font,
+                              face="bold",
+                              size=16, 
+                              color="grey40",
+                              hjust=.5, 
+                              margin=margin(20,0,0,0)),
+  
+  plot.background = element_rect(color="white", fill="white"),
+  plot.margin = margin(20, 40, 20, 40)
+)
+
+showtext_opts(dpi = 320)
+
+ggsave(
+  "C:/Users/Hp/Desktop/IBK - TEMP/viz3.png", 
+  dpi=320, width = 12, height = 9
+)
+showtext_auto(FALSE)
+ 
+viz3
+```
+
+
+
+```{r}
+viz4 <- ggplot(df4, aes(fill = Gender, values = n)) +
+   geom_waffle(color = "white", size = 0.25, n_rows = 10, flip = TRUE) +
+  facet_wrap(~IT_Student, nrow = 1, strip.position = "bottom") +
+  scale_x_discrete() + 
+  scale_y_continuous(labels = function(x) x * 10, # make this multiply the same as n_rows
+                     expand = c(0,0))+
+  scale_fill_met_d("Java", direction=1)+
+  labs(title = "Java", x = "IT Student",
+       
+       subtitle =  " ",
+       caption = "Graphic: Ibikunle Gabriel|Data Source: Don't doubt my data")+
+  theme_minimal()+
+  theme(
+        axis.text.x = element_text(family = body_font, size=12),
+    axis.text.y = element_text(family = body_font, size=12),
+  # Legend
+  legend.position = "right",
+  legend.title = element_text(""),
+  legend.spacing = unit(0.5, 'cm'),
+  legend.key.height= unit(0.5, 'cm'),
+  legend.key.width= unit(0.7, 'cm'),
+  legend.text = element_text(family = body_font,
+                             size=13,
+                             face = 'plain',
+                             color = "grey10"),
+  
+  # TITLE
+  plot.title.position = "plot",
+  plot.title = element_textbox(margin = margin(20, 0, 10, 0),
+                               size = 15,
+                               family = title_font,
+                               face = "bold",
+                               width = unit(55, "lines")),
+  
+  # SUB-TITLE
+  plot.subtitle = element_text(margin = margin(10, 0, 20, 0),
+                            size = 16,
+                            family = body_font,
+                            color = "grey15"),
+  # Caption
+  plot.caption.position = "plot", 
+  plot.caption = element_text(family=body_font,
+                              face="bold",
+                              size=12, 
+                              color="grey40",
+                              hjust=.5, 
+                              margin=margin(20,0,0,0)),
+  
+  plot.background = element_rect(color="white", fill="white"),
+  plot.margin = margin(20, 40, 20, 40)
+)
+
+showtext_opts(dpi = 320)
+
+ggsave(
+  "C:/Users/Hp/Desktop/IBK - TEMP/viz4.png", 
+  dpi=320, width = 12, height = 9
+)
+showtext_auto(FALSE)
+ 
+viz4
+```
+
+
+
+```{r}
+combined <-
+(viz1|viz2)/(viz3|viz4)
+
+ggsave(
+  "C:/Users/Hp/Desktop/IBK - TEMP/combined.png", 
+  dpi=320, width = 12, height = 9
+)
+
+combined
+```
+
+
+
+
+
+
+
+
+
+
+
